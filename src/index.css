@@ -7,3 +7,45 @@ body {
   margin: 0;
   padding: 1rem;
 }
+
+h1 {
+  margin-top: 0;
+}
+
+.dex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.dex-card {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dex-card img,
+.dex-card-missing {
+  width: 100%;
+  aspect-ratio: 245 / 337;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.dex-card-missing {
+  display: grid;
+  place-items: center;
+  border: 1px dashed currentColor;
+  opacity: 0.5;
+}
+
+.dex-card figcaption {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+}
+
+.dex-card figcaption span {
+  opacity: 0.7;
+}

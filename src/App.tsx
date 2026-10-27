@@ -1,25 +1,31 @@
-import { useEffect, useState } from 'react'
-import type { Card } from '@tcgdex/sdk'
-import { tcgdex } from './lib/tcgdex'
+import { useQuery } from '@tanstack/react-query'
+import { DexCard } from './components/DexCard'
+import type { DexEntry } from './types'
+
+async function fetchDex(): Promise<DexEntry[]> {
+  const response = await fetch('/api/dex')
+  if (!response.ok) throw new Error(`Request failed: ${response.status}`)
+  return response.json()
+}
 
 function App() {
-  const [card, setCard] = useState<Card | null>(null)
+  const { data, isPending, error } = useQuery({
+    queryKey: ['dex'],
+    queryFn: fetchDex,
+  })
 
-  useEffect(() => {
-    tcgdex.fetch('cards', 'swsh3-136').then((c) => setCard(c ?? null))
-    // const res = tcgdex.fetch('dex-ids', '1')
-     tcgdex.fetch('sets', 'base1').then((data) => console.log(data))
-  }, [])
-
-  if (!card) return <p>Loading...</p>
+  if (isPending) return <p>Loading...</p>
+  if (error) return <p>Something went wrong: {error.message}</p>
 
   return (
-    <div>
-      <h1>{card.name}</h1>
-      {card.image && (
-        <img src={`${card.image}/high.webp`} alt={card.name} width={300} />
-      )}
-    </div>
+    <main>
+      <h1>Master Dex</h1>
+      <div className="dex-grid">
+        {data.map((entry) => (
+          <DexCard key={entry.dex_id} entry={entry} />
+        ))}
+      </div>
+    </main>
   )
 }
 
