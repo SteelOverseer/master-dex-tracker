@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchDex } from './api'
-import { DexCard } from './components/DexCard'
+import { GENERATIONS } from './generations'
+import { GenerationSection } from './components/GenerationSection'
 import { ProgressCount } from './components/ProgressCount'
 
 function App() {
@@ -16,11 +17,16 @@ function App() {
     <main>
       <h1>Master Dex</h1>
       <ProgressCount entries={data} />
-      <div className="dex-grid">
-        {data.map((entry) => (
-          <DexCard key={entry.dex_id} entry={entry} />
-        ))}
-      </div>
+      {GENERATIONS.map((generation) => (
+        <GenerationSection
+          key={generation.number}
+          title={`Generation ${generation.number}`}
+          subtitle={generation.region}
+          entries={data.filter(
+            (entry) => entry.dex_id >= generation.first && entry.dex_id <= generation.last,
+          )}
+        />
+      ))}
     </main>
   )
 }
