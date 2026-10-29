@@ -1,12 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { fetchDex } from './api'
 import { DexCard } from './components/DexCard'
-import type { DexEntry } from './types'
-
-async function fetchDex(): Promise<DexEntry[]> {
-  const response = await fetch('/api/dex')
-  if (!response.ok) throw new Error(`Request failed: ${response.status}`)
-  return response.json()
-}
 
 function App() {
   const { data, isPending, error } = useQuery({
