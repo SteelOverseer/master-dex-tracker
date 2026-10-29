@@ -9,9 +9,12 @@ const priceFormat = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 })
 
-function optionLabel(printing: Printing) {
+// The number comes first so it stays visible if the label is cut off. The
+// card name is only added when it differs from the one shown above the image.
+function optionLabel(printing: Printing, shownName: string) {
   const year = printing.release_date.slice(0, 4)
-  return `${printing.set_name} (${year}) - ${printing.name} #${printing.local_id}`
+  const label = `#${printing.local_id} · ${printing.set_name} (${year})`
+  return printing.name === shownName ? label : `${label} · ${printing.name}`
 }
 
 export function DexCard({ entry }: { entry: DexEntry }) {
@@ -80,11 +83,11 @@ export function DexCard({ entry }: { entry: DexEntry }) {
           {printings ? (
             printings.map((p) => (
               <option key={p.card_id} value={p.card_id}>
-                {optionLabel(p)}
+                {optionLabel(p, entry.name)}
               </option>
             ))
           ) : (
-            <option value={entry.card_id}>{optionLabel(entry)}</option>
+            <option value={entry.card_id}>{optionLabel(entry, entry.name)}</option>
           )}
         </select>
       </figcaption>

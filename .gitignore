@@ -25,6 +25,7 @@ dist-ssr
 
 # App data and secrets
 data/
+backups/
 *.db
 *.db-journal
 *.db-wal

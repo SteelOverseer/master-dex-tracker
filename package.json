@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "server": "node --watch server/index.ts",
+    "backup": "node server/backup.ts",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
