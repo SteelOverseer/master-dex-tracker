@@ -4,6 +4,11 @@ import { fetchPrintings } from '../api'
 import { useSaveEntry } from '../hooks/useSaveEntry'
 import type { DexEntry, Printing } from '../types'
 
+const priceFormat = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+})
+
 function optionLabel(printing: Printing) {
   const year = printing.release_date.slice(0, 4)
   return `${printing.set_name} (${year}) - ${printing.name} #${printing.local_id}`
@@ -39,6 +44,7 @@ export function DexCard({ entry }: { entry: DexEntry }) {
       set_name: printing.set_name,
       release_date: printing.release_date,
       status: 'wanted',
+      price: null, // filled in once the server has looked it up
     })
   }
 
@@ -50,7 +56,12 @@ export function DexCard({ entry }: { entry: DexEntry }) {
       onFocus={() => setWantsOptions(true)}
     >
       <p className="dex-card-title">
-        #{entry.dex_id} {entry.name}
+        <span>
+          #{entry.dex_id} {entry.name}
+        </span>
+        <span className="dex-card-price">
+          {entry.price === null ? '-' : priceFormat.format(entry.price)}
+        </span>
       </p>
       <button
         type="button"

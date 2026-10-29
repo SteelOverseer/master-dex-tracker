@@ -1,28 +1,10 @@
-import TCGdex from '@tcgdex/sdk'
 import { db } from './db.ts'
+import { DELAY_MS, sleep, tcgdex, withRetry } from './tcgdex.ts'
 
 // Usage: node server/sync.ts [limit]
 // With a limit, only the first N dex numbers are synced.
 const limit = process.argv[2] ? Number(process.argv[2]) : Infinity
-const DELAY_MS = Number(process.env.SYNC_DELAY_MS ?? 500)
 const DIGITAL_SERIES = 'tcgp'
-
-const tcgdex = new TCGdex('en')
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-// Retry a failed request a few times, waiting longer after each failure.
-async function withRetry<T>(request: () => Promise<T>): Promise<T> {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      return await request()
-    } catch (error) {
-      if (attempt === 4) throw error
-      const wait = 2000 * 2 ** (attempt - 1)
-      console.warn(`  request failed (attempt ${attempt}), retrying in ${wait}ms`)
-      await sleep(wait)
-    }
-  }
-}
 
 const insertSet = db.prepare(
   `INSERT OR REPLACE INTO sets (id, name, series_id, release_date) VALUES (?, ?, ?, ?)`,

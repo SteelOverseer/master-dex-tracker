@@ -17,6 +17,16 @@ export function useSaveEntry() {
       )
       return { previous }
     },
+    // The server looks up the price of a newly chosen card, so apply it here.
+    onSuccess: (saved) => {
+      queryClient.setQueryData<DexEntry[]>(['dex'], (old) =>
+        old?.map((entry) =>
+          entry.dex_id === saved.dex_id && entry.card_id === saved.card_id
+            ? { ...entry, price: saved.price }
+            : entry,
+        ),
+      )
+    },
     onError: (_error, _next, context) => {
       queryClient.setQueryData(['dex'], context?.previous)
     },

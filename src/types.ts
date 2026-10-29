@@ -12,4 +12,5 @@ export interface Printing {
 export interface DexEntry extends Printing {
   dex_id: number
   status: Status | null
+  price: number | null
 }

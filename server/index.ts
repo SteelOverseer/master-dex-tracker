@@ -1,33 +1,23 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { db } from './db.ts'
+import { refreshPrice } from './prices.ts'
+import { CHOSEN_CARDS } from './queries.ts'
 
 const app = new Hono()
 
 app.get('/api/health', (c) => c.json({ ok: true }))
 
 // One row per dex number: the card you picked if you have, otherwise its
-// earliest printing, along with your status (null when untouched).
+// earliest printing, along with your status and its price (null when unknown).
 const dexEntries = db.prepare(`
-  WITH earliest AS (
-    SELECT p.dex_id, p.card_id,
-           ROW_NUMBER() OVER (
-             PARTITION BY p.dex_id ORDER BY s.release_date, p.card_id
-           ) AS rank
-    FROM printings p
-    JOIN sets s ON s.id = p.set_id
-  ),
-  chosen AS (
-    SELECT e.dex_id, COALESCE(c.card_id, e.card_id) AS card_id, c.status
-    FROM earliest e
-    LEFT JOIN collection c ON c.dex_id = e.dex_id
-    WHERE e.rank = 1
-  )
+  WITH ${CHOSEN_CARDS}
   SELECT ch.dex_id, p.card_id, p.local_id, p.name, p.image,
-         s.name AS set_name, s.release_date, ch.status
+         s.name AS set_name, s.release_date, ch.status, cp.price
   FROM chosen ch
   JOIN printings p ON p.card_id = ch.card_id
   JOIN sets s ON s.id = p.set_id
+  LEFT JOIN card_prices cp ON cp.card_id = ch.card_id
   ORDER BY ch.dex_id
 `)
 
@@ -74,7 +64,14 @@ app.put('/api/dex/:dexId', async (c) => {
   }
 
   saveEntry.run(dexId, cardId, status)
-  return c.json({ dex_id: dexId, card_id: cardId, status })
+
+  // Make sure the newly chosen card has a price. A failure here must not
+  // undo the save, so fall back to no price.
+  const price = await refreshPrice(cardId).catch((error) => {
+    console.warn(`Could not fetch price for ${cardId}:`, error)
+    return null
+  })
+  return c.json({ dex_id: dexId, card_id: cardId, status, price })
 })
 
 serve({ fetch: app.fetch, port: 3000 }, (info) => {

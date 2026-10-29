@@ -79,9 +79,17 @@ h1 {
 }
 
 .dex-card-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
   margin: 0;
   font-size: 0.85rem;
   font-weight: bold;
+}
+
+.dex-card-price {
+  font-weight: normal;
+  opacity: 0.8;
 }
 
 .dex-card select {

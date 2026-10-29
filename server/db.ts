@@ -29,6 +29,13 @@ db.exec(`
 
   CREATE INDEX IF NOT EXISTS idx_printings_dex_id ON printings(dex_id);
 
+  CREATE TABLE IF NOT EXISTS card_prices (
+    card_id    TEXT PRIMARY KEY REFERENCES printings(card_id),
+    price      REAL,
+    variant    TEXT,
+    fetched_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS collection (
     dex_id     INTEGER PRIMARY KEY,
     card_id    TEXT NOT NULL REFERENCES printings(card_id),
