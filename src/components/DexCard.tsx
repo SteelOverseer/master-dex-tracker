@@ -49,6 +49,9 @@ export function DexCard({ entry }: { entry: DexEntry }) {
       onPointerEnter={() => setWantsOptions(true)}
       onFocus={() => setWantsOptions(true)}
     >
+      <p className="dex-card-title">
+        #{entry.dex_id} {entry.name}
+      </p>
       <button
         type="button"
         className="dex-card-image"
@@ -62,9 +65,6 @@ export function DexCard({ entry }: { entry: DexEntry }) {
         )}
       </button>
       <figcaption>
-        <strong>
-          #{entry.dex_id} {entry.name}
-        </strong>
         <select value={entry.card_id} onChange={(e) => selectPrinting(e.target.value)}>
           {printings ? (
             printings.map((p) => (

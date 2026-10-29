@@ -62,10 +62,10 @@ h1 {
   opacity: 0.5;
 }
 
-.dex-card figcaption {
-  display: flex;
-  flex-direction: column;
+.dex-card-title {
+  margin: 0;
   font-size: 0.85rem;
+  font-weight: bold;
 }
 
 .dex-card select {
