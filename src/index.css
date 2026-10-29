@@ -134,7 +134,37 @@ h1 {
   font-weight: bold;
 }
 
+.dex-card-title {
+  position: relative;
+  cursor: default;
+}
+
+.dex-card-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Shows the full name in a box over the card, without moving anything. */
+.dex-card-name.expanded {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  left: -0.25rem;
+  z-index: 2;
+  padding: 0.25rem;
+  border-radius: 4px;
+  background: Canvas;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+  overflow: visible;
+  white-space: normal;
+}
+
 .dex-card-price {
+  margin-left: auto;
+  flex-shrink: 0;
   font-weight: normal;
   opacity: 0.8;
 }
@@ -144,3 +174,74 @@ h1 {
   font: inherit;
   font-size: 0.8rem;
 }
+
+/* Customizable select: the list is a page element we can place. It opens
+   below the select, growing to the right, or to the left for cards near the
+   right edge of the page (see data-align-end). */
+@supports (appearance: base-select) {
+  .dex-card select,
+  .dex-card select::picker(select) {
+    appearance: base-select;
+  }
+
+  .dex-card select {
+    box-sizing: border-box;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-radius: 4px;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  /* The text is cut off with an ellipsis so the arrow always stays visible. */
+  .dex-card select > button {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    overflow: hidden;
+  }
+
+  .dex-card select selectedcontent {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dex-card select::picker(select) {
+    box-sizing: border-box;
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block;
+    width: max-content;
+    min-width: anchor-size(width);
+    max-width: 24rem;
+    max-height: 18rem;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    padding: 0;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    border-radius: 4px;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  .dex-card[data-align-end='true'] select::picker(select) {
+    position-area: block-end span-inline-start;
+  }
+
+  .dex-card select option {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .dex-card select option:hover,
+  .dex-card select option:checked {
+    background: color-mix(in srgb, currentColor 15%, transparent);
+  }
+}
+

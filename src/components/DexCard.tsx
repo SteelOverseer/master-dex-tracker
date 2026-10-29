@@ -17,8 +17,18 @@ function optionLabel(printing: Printing, shownName: string) {
   return printing.name === shownName ? label : `${label} · ${printing.name}`
 }
 
+// The dropdown list can be wider than the card (see max-width in index.css),
+// so cards near the right edge open it to the left instead.
+const DROPDOWN_MAX_WIDTH = 384
+
+function opensPastRightEdge(card: HTMLElement) {
+  return window.innerWidth - card.getBoundingClientRect().left < DROPDOWN_MAX_WIDTH
+}
+
 export function DexCard({ entry }: { entry: DexEntry }) {
   const [wantsOptions, setWantsOptions] = useState(false)
+  const [nameExpanded, setNameExpanded] = useState(false)
+  const [alignEnd, setAlignEnd] = useState(false)
   const save = useSaveEntry()
 
   // Only load the printings once the user shows interest in this card.
@@ -55,11 +65,25 @@ export function DexCard({ entry }: { entry: DexEntry }) {
     <figure
       className="dex-card"
       data-owned={owned}
-      onPointerEnter={() => setWantsOptions(true)}
-      onFocus={() => setWantsOptions(true)}
+      data-align-end={alignEnd}
+      onPointerEnter={(e) => {
+        setWantsOptions(true)
+        setAlignEnd(opensPastRightEdge(e.currentTarget))
+      }}
+      onFocus={(e) => {
+        setWantsOptions(true)
+        setAlignEnd(opensPastRightEdge(e.currentTarget))
+      }}
     >
       <p className="dex-card-title">
-        <span>
+        <span
+          className={nameExpanded ? 'dex-card-name expanded' : 'dex-card-name'}
+          onPointerEnter={(e) =>
+            // Only expand when the name is actually cut off.
+            setNameExpanded(e.currentTarget.scrollWidth > e.currentTarget.clientWidth)
+          }
+          onPointerLeave={() => setNameExpanded(false)}
+        >
           #{entry.dex_id} {entry.name}
         </span>
         <span className="dex-card-price">
@@ -79,7 +103,14 @@ export function DexCard({ entry }: { entry: DexEntry }) {
         )}
       </button>
       <figcaption>
-        <select value={entry.card_id} onChange={(e) => selectPrinting(e.target.value)}>
+        <select
+          value={entry.card_id}
+          title={optionLabel(entry, entry.name)}
+          onChange={(e) => selectPrinting(e.target.value)}
+        >
+          <button type="button">
+            <selectedcontent />
+          </button>
           {printings ? (
             printings.map((p) => (
               <option key={p.card_id} value={p.card_id}>
