@@ -6,6 +6,8 @@ interface Props {
   title: string
   subtitle?: string
   entries: DexEntry[]
+  // Show the cards regardless of the remembered state, e.g. while searching.
+  forceOpen?: boolean
 }
 
 // Storage can be unavailable or throw (private windows, blocked site data),
@@ -26,7 +28,7 @@ function writeOpen(key: string, open: boolean) {
   }
 }
 
-export function GenerationSection({ title, subtitle, entries }: Props) {
+export function GenerationSection({ title, subtitle, entries, forceOpen = false }: Props) {
   const storageKey = `section:${title}`
   const [open, setOpen] = useState(() => readOpen(storageKey))
   const owned = entries.filter((entry) => entry.status === 'owned').length
@@ -34,8 +36,10 @@ export function GenerationSection({ title, subtitle, entries }: Props) {
   return (
     <details
       className="generation"
-      open={open}
+      open={open || forceOpen}
       onToggle={(event) => {
+        // Forcing a section open must not overwrite the remembered state.
+        if (forceOpen) return
         const nowOpen = event.currentTarget.open
         setOpen(nowOpen)
         writeOpen(storageKey, nowOpen)

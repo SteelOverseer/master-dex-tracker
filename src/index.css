@@ -28,6 +28,15 @@ h1 {
   text-align: right;
 }
 
+.search {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 24rem;
+  margin-bottom: 1.5rem;
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+}
+
 .generation {
   margin-bottom: 2rem;
 }
