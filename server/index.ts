@@ -13,7 +13,8 @@ app.get('/api/health', (c) => c.json({ ok: true }))
 const dexEntries = db.prepare(`
   WITH ${CHOSEN_CARDS}
   SELECT ch.dex_id, p.card_id, p.local_id, p.name, p.image,
-         s.name AS set_name, s.release_date, ch.status, cp.price
+         s.id AS set_id, s.name AS set_name, s.abbreviation AS set_abbreviation,
+         s.release_date, ch.status, cp.price
   FROM chosen ch
   JOIN printings p ON p.card_id = ch.card_id
   JOIN sets s ON s.id = p.set_id

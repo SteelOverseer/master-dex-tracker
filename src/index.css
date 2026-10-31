@@ -28,13 +28,114 @@ h1 {
   text-align: right;
 }
 
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.layout main {
+  min-width: 0;
+  flex: 1;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
 .search {
   box-sizing: border-box;
   width: 100%;
-  max-width: 24rem;
-  margin-bottom: 1.5rem;
   padding: 0.4rem 0.6rem;
   font: inherit;
+}
+
+.set-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.set-list h2 {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.set-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-height: 0;
+  max-height: 14rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.set-list button {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.set-list button:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.set-list button[aria-pressed='true'] {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  font-weight: 600;
+}
+
+.set-abbreviation {
+  margin-left: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+.set-count {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+/* On wide screens the filters stay in view while you scroll. Narrow screens
+   keep them at the top of the page. */
+@media (min-width: 56rem) {
+  .layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .set-list ul {
+    max-height: none;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 1rem;
+    flex: 0 0 16rem;
+    margin-bottom: 0;
+    max-height: calc(100vh - 2rem);
+  }
 }
 
 .generation {

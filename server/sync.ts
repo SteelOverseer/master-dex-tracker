@@ -7,12 +7,18 @@ const limit = process.argv[2] ? Number(process.argv[2]) : Infinity
 const DIGITAL_SERIES = 'tcgp'
 
 const insertSet = db.prepare(
-  `INSERT OR REPLACE INTO sets (id, name, series_id, release_date) VALUES (?, ?, ?, ?)`,
+  `INSERT OR REPLACE INTO sets (id, name, series_id, release_date, abbreviation)
+   VALUES (?, ?, ?, ?, ?)`,
 )
 const insertPrinting = db.prepare(
   `INSERT OR REPLACE INTO printings (card_id, dex_id, set_id, local_id, name, image)
    VALUES (?, ?, ?, ?, ?, ?)`,
 )
+
+// The SDK's set type leaves out the abbreviation the API returns.
+function abbreviationOf(set: object) {
+  return (set as { abbreviation?: { official?: string } }).abbreviation?.official ?? null
+}
 
 function inTransaction(work: () => void) {
   db.exec('BEGIN')
@@ -43,7 +49,13 @@ async function syncSets() {
       continue
     }
 
-    insertSet.run(set.id, set.name, set.serie.id, set.releaseDate)
+    insertSet.run(
+      set.id,
+      set.name,
+      set.serie.id,
+      set.releaseDate,
+      abbreviationOf(set),
+    )
     for (const card of set.cards) cardToSet.set(card.id, set.id)
     if ((index + 1) % 25 === 0) console.log(`  sets ${index + 1}/${wanted.length}`)
   }

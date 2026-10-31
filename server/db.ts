@@ -43,3 +43,9 @@ db.exec(`
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 `)
+
+// Added after the first release, so databases created earlier need the column.
+const setColumns = db.prepare(`PRAGMA table_info(sets)`).all() as { name: string }[]
+if (!setColumns.some((column) => column.name === 'abbreviation')) {
+  db.exec(`ALTER TABLE sets ADD COLUMN abbreviation TEXT`)
+}
