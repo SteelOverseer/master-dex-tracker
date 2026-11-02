@@ -46,6 +46,53 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
+.binder-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* A checkbox drawn as a sliding switch. */
+.binder-toggle input {
+  position: relative;
+  flex: none;
+  width: 2.25rem;
+  height: 1.25rem;
+  margin: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 30%, transparent);
+  appearance: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.binder-toggle input::before {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 50%;
+  background: Canvas;
+  transition: transform 0.2s;
+}
+
+.binder-toggle input:checked {
+  background: #1976d2;
+}
+
+.binder-toggle input:checked::before {
+  transform: translateX(1rem);
+}
+
+.binder-toggle input:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
 .search {
   box-sizing: border-box;
   width: 100%;
@@ -355,3 +402,87 @@ h1 {
   }
 }
 
+/* Binder preview: pages of pockets, two to a spread like an open binder. */
+.binder {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 100rem;
+  container-type: inline-size;
+}
+
+.binder-spread {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Two pages side by side as soon as there is room, each taking half the width. */
+@container (min-width: 36rem) {
+  .binder-spread {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.binder-page {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+
+.binder-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.binder-page figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  text-align: center;
+  opacity: 0.6;
+}
+
+.binder-slot {
+  display: block;
+  aspect-ratio: 245 / 337;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.binder-slot-empty {
+  cursor: default;
+}
+
+.binder-slot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    filter 0.2s,
+    opacity 0.2s;
+}
+
+.binder-slot[data-owned='false'] img,
+.binder-slot[data-owned='false'] .binder-slot-missing {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.binder-slot-missing {
+  display: block;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.binder-slot[data-dimmed='true'] {
+  opacity: 0.2;
+}

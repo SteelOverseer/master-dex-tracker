@@ -1,6 +1,6 @@
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import type { DexEntry } from '../types'
-import { DexCard } from './DexCard'
 
 interface Props {
   title: string
@@ -8,6 +8,7 @@ interface Props {
   entries: DexEntry[]
   // Show the cards regardless of the remembered state, e.g. while searching.
   forceOpen?: boolean
+  children: ReactNode
 }
 
 // Storage can be unavailable or throw (private windows, blocked site data),
@@ -28,7 +29,7 @@ function writeOpen(key: string, open: boolean) {
   }
 }
 
-export function GenerationSection({ title, subtitle, entries, forceOpen = false }: Props) {
+export function GenerationSection({ title, subtitle, entries, forceOpen = false, children }: Props) {
   const storageKey = `section:${title}`
   const [open, setOpen] = useState(() => readOpen(storageKey))
   const owned = entries.filter((entry) => entry.status === 'owned').length
@@ -54,11 +55,7 @@ export function GenerationSection({ title, subtitle, entries, forceOpen = false 
           </span>
         </h2>
       </summary>
-      <div className="dex-grid">
-        {entries.map((entry) => (
-          <DexCard key={entry.dex_id} entry={entry} />
-        ))}
-      </div>
+      {children}
     </details>
   )
 }
