@@ -64,12 +64,12 @@ function App() {
 
   return (
     <>
-      <header>
-        <h1>Master Dex</h1>
-        <ProgressCount entries={data} />
-      </header>
       <div className="layout">
         <aside className="sidebar">
+          <header>
+            <h1>Master Dex</h1>
+            <ProgressCount entries={data} />
+          </header>
           <label className="binder-toggle">
             <input
               type="checkbox"
