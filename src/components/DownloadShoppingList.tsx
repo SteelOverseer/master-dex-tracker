@@ -1,3 +1,4 @@
+import { DownloadIcon } from './icons'
 import { buildShoppingList } from '../shoppingList'
 import type { WantedSet } from '../wantedSets'
 
@@ -19,7 +20,8 @@ export function DownloadShoppingList({ sets }: { sets: WantedSet[] }) {
 
   return (
     <button type="button" className="download-list" disabled={sets.length === 0} onClick={download}>
-      Download shopping list
+      <DownloadIcon />
+      Shopping list
     </button>
   )
 }

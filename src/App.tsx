@@ -4,6 +4,7 @@ import { fetchDex } from './api'
 import { pageCount } from './binder'
 import { GENERATIONS } from './generations'
 import { BinderPages } from './components/BinderPages'
+import { SearchIcon } from './components/icons'
 import { DownloadShoppingList } from './components/DownloadShoppingList'
 import { DexCard } from './components/DexCard'
 import { GenerationSection } from './components/GenerationSection'
@@ -82,14 +83,17 @@ function App() {
             Binder preview
           </label>
           <DownloadShoppingList sets={setOptions} />
-          <input
-            type="search"
-            className="search"
-            placeholder="Search by card name"
-            aria-label="Search by card name"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
+          <div className="search-field">
+            <SearchIcon />
+            <input
+              type="search"
+              className="search"
+              placeholder="Card name"
+              aria-label="Card name"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </div>
           <nav className="set-list" aria-label="Filter by set">
             <h2>Filter by set</h2>
             <ul>
