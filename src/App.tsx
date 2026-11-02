@@ -4,10 +4,12 @@ import { fetchDex } from './api'
 import { pageCount } from './binder'
 import { GENERATIONS } from './generations'
 import { BinderPages } from './components/BinderPages'
+import { DownloadShoppingList } from './components/DownloadShoppingList'
 import { DexCard } from './components/DexCard'
 import { GenerationSection } from './components/GenerationSection'
 import { ProgressCount } from './components/ProgressCount'
 import type { DexEntry } from './types'
+import { groupWantedBySet } from './wantedSets'
 
 const BINDER_KEY = 'view:binder'
 
@@ -40,29 +42,9 @@ function App() {
   if (isPending) return <p>Loading...</p>
   if (error) return <p>Something went wrong: {error.message}</p>
 
-  // Sets that still have wanted cards, with how many and the lowest dex number
-  // wanted in each, so sets holding the oldest generations' cards come first.
-  const wantedSets = new Map<
-    string,
-    { name: string; abbreviation: string | null; count: number; firstDex: number; releaseDate: string }
-  >()
-  for (const entry of data) {
-    if (entry.status !== 'wanted') continue
-    const found = wantedSets.get(entry.set_id)
-    wantedSets.set(entry.set_id, {
-      name: entry.set_name,
-      abbreviation: entry.set_abbreviation,
-      count: (found?.count ?? 0) + 1,
-      firstDex: Math.min(found?.firstDex ?? entry.dex_id, entry.dex_id),
-      releaseDate: entry.release_date,
-    })
-  }
-  const setOptions = [...wantedSets].sort(
-    (a, b) =>
-      a[1].firstDex - b[1].firstDex || a[1].releaseDate.localeCompare(b[1].releaseDate),
-  )
+  const setOptions = groupWantedBySet(data)
   // A set drops out of the list once its last wanted card is marked owned.
-  const activeSet = wantedSets.has(wantedSet) ? wantedSet : ''
+  const activeSet = setOptions.some((set) => set.id === wantedSet) ? wantedSet : ''
 
   const term = search.trim().toLowerCase()
   const filtering = Boolean(term || activeSet)
@@ -99,6 +81,7 @@ function App() {
             />
             Binder preview
           </label>
+          <DownloadShoppingList sets={setOptions} />
           <input
             type="search"
             className="search"
@@ -110,18 +93,18 @@ function App() {
           <nav className="set-list" aria-label="Filter by set">
             <h2>Filter by set</h2>
             <ul>
-              {setOptions.map(([id, set]) => (
-                <li key={id}>
+              {setOptions.map((set) => (
+                <li key={set.id}>
                   <button
                     type="button"
-                    aria-pressed={activeSet === id}
-                    onClick={() => setWantedSet(activeSet === id ? '' : id)}
+                    aria-pressed={activeSet === set.id}
+                    onClick={() => setWantedSet(activeSet === set.id ? '' : set.id)}
                   >
                     <span className="set-name">
                       {set.name}
                       {set.abbreviation && <span className="set-abbreviation">{set.abbreviation}</span>}
                     </span>
-                    <span className="set-count">{set.count}</span>
+                    <span className="set-count">{set.entries.length}</span>
                   </button>
                 </li>
               ))}

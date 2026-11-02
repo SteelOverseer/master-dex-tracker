@@ -151,6 +151,17 @@ h1 {
   font-weight: 600;
 }
 
+.download-list {
+  padding: 0.4rem 0.6rem;
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.download-list:disabled {
+  cursor: default;
+}
+
 .set-abbreviation {
   margin-left: 0.4rem;
   font-size: 0.75rem;
