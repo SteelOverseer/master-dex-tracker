@@ -46,6 +46,14 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
+.sidebar-actions {
+  display: flex;
+  margin-top: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .binder-toggle {
   display: flex;
   align-items: center;
@@ -95,6 +103,7 @@ h1 {
 
 .search-field {
   position: relative;
+  margin-bottom: 0.5rem;
 }
 
 .search-field svg {
@@ -120,8 +129,8 @@ h1 {
 }
 
 .set-list h2 {
-  margin: 0 0 0.25rem;
-  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
 }
 
 .set-list ul {
@@ -166,6 +175,7 @@ h1 {
 
 .download-list {
   display: inline-flex;
+  flex: none;
   align-items: center;
   gap: 0.4rem;
   padding: 0.4rem 0.6rem;

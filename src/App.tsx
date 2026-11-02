@@ -70,19 +70,21 @@ function App() {
             <h1>Master Dex</h1>
             <ProgressCount entries={data} />
           </header>
-          <label className="binder-toggle">
-            <input
-              type="checkbox"
-              role="switch"
-              checked={binder}
-              onChange={(event) => {
-                setBinder(event.target.checked)
-                writeBinder(event.target.checked)
-              }}
-            />
-            Binder preview
-          </label>
-          <DownloadShoppingList sets={setOptions} />
+          <div className="sidebar-actions">
+            <label className="binder-toggle">
+              <input
+                type="checkbox"
+                role="switch"
+                checked={binder}
+                onChange={(event) => {
+                  setBinder(event.target.checked)
+                  writeBinder(event.target.checked)
+                }}
+              />
+              Binder preview
+            </label>
+            <DownloadShoppingList sets={setOptions} />
+          </div>
           <div className="search-field">
             <SearchIcon />
             <input
