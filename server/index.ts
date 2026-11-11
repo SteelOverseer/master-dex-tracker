@@ -1,4 +1,6 @@
+import { join } from 'node:path'
 import { serve } from '@hono/node-server'
+import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
 import { db } from './db.ts'
 import { PRICE_BASELINE, PRICE_CHANGE, priceChange } from './priceChanges.ts'
@@ -78,6 +80,11 @@ app.put('/api/dex/:dexId', async (c) => {
   return c.json({ dex_id: dexId, card_id: cardId, status, price, price_change: priceChange(cardId) })
 })
 
+// Everything outside /api is the built front end (`npm run build`), so a
+// single process serves the whole app. In development, use the Vite dev
+// server instead; it passes /api through to here.
+app.use('/*', serveStatic({ root: join(import.meta.dirname, '..', 'dist') }))
+
 serve({ fetch: app.fetch, port: 3000 }, (info) => {
-  console.log(`API listening on http://localhost:${info.port}`)
+  console.log(`Listening on http://localhost:${info.port}`)
 })

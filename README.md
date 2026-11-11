@@ -42,6 +42,7 @@ Both sync scripts take an optional number to limit the run, for example `node se
 | --- | --- |
 | `npm run dev` | Vite dev server |
 | `npm run server` | API server, restarts on changes |
+| `npm start` | Server without restarts, for an always-on machine; also serves the built front end |
 | `npm run backup` | Snapshot the database to `backups/`, keeping the newest 10 |
 | `npm run build` | Type-check and build the front end |
 | `npm run lint` | ESLint |
