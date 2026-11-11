@@ -1,0 +1,15 @@
+# Runs the app (API and built front end) on port 3000. A systemd user
+# service: install it as described in the README under "Always-on machine".
+# Assumes the repo is at ~/Projects/master-dex-tracker and Node comes from mise.
+
+[Unit]
+Description=Master Dex tracker
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/Projects/master-dex-tracker
+ExecStart=%h/.local/share/mise/shims/node server/index.ts
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

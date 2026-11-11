@@ -47,6 +47,43 @@ Both sync scripts take an optional number to limit the run, for example `node se
 | `npm run build` | Type-check and build the front end |
 | `npm run lint` | ESLint |
 
+## Always-on machine
+
+To run the app on a machine that stays on, so it's reachable from your phone and other computers. The unit files in `deploy/` assume the repo is at `~/Projects/master-dex-tracker` and Node comes from mise; edit them if not.
+
+1. Install Node 22.18 or newer (for example `mise use -g node@26`) and [Tailscale](https://tailscale.com). Sign every device you'll use into the same Tailscale account. The app has no login, so keep it on Tailscale rather than exposing it to the internet.
+2. Clone the repo, then `npm install` and `npm run build`.
+3. Copy your database across: run `npm run backup` on the old machine and copy the snapshot from `backups/` to `data/app.db` here. From then on, use only this copy.
+4. Install and start the services:
+
+   ```bash
+   mkdir -p ~/.config/systemd/user
+   cp deploy/master-dex.service deploy/master-dex-prices.* ~/.config/systemd/user/
+   systemctl --user daemon-reload
+   systemctl --user enable --now master-dex.service master-dex-prices.timer
+   sudo loginctl enable-linger $USER   # keep them running while you're logged out
+   ```
+
+5. If a firewall is on (Omarchy enables `ufw`; check with `sudo ufw status`), let port 3000 in over Tailscale only, so it stays closed on your regular network:
+
+   ```bash
+   sudo ufw allow in on tailscale0 to any port 3000 proto tcp
+   ```
+
+6. Keep the machine from going to sleep:
+   - If it's a laptop, set `HandleLidSwitch=ignore` (and `HandleLidSwitchExternalPower=ignore`) in `/etc/systemd/logind.conf`, then reboot.
+   - Make sure idle doesn't suspend it. On Omarchy, check `~/.config/hypr/hypridle.conf` for a `systemctl suspend` line. Locking the screen and turning the display off are fine; the services keep running.
+
+Open `http://<machine's Tailscale name>:3000` from any of your devices.
+
+| Task | Command |
+| --- | --- |
+| Update after `git pull` | `npm install && npm run build && systemctl --user restart master-dex` |
+| Server logs | `journalctl --user -u master-dex -f` |
+| Price sync logs | `journalctl --user -u master-dex-prices` |
+| Run the price sync now | `systemctl --user start master-dex-prices` |
+| Next scheduled sync | `systemctl --user list-timers master-dex-prices.timer` |
+
 ## How it works
 
 - `server/sync.ts` downloads every physical set and each Pokémon's cards from TCGdex into SQLite. Pokémon TCG Pocket sets are skipped because they are digital only.

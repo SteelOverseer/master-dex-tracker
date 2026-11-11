@@ -1,0 +1,11 @@
+# Fetches fresh prices once; started daily by master-dex-prices.timer.
+# Assumes the repo is at ~/Projects/master-dex-tracker and Node comes from mise.
+
+[Unit]
+Description=Master Dex price sync
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Projects/master-dex-tracker
+ExecStart=%h/.local/share/mise/shims/node server/sync-prices.ts

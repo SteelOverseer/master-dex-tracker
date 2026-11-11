@@ -1,0 +1,12 @@
+# Runs the price sync once a day. If the machine was off at the time, it runs
+# when the machine is next on.
+
+[Unit]
+Description=Daily Master Dex price sync
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
