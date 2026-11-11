@@ -44,7 +44,7 @@ export function PriceMovers({ entries, onSelect }: Props) {
   const { up, down } = wantedPriceMovers(entries)
 
   return (
-    <details className="price-movers" open>
+    <details className="panel price-movers" open>
       <summary>
         <h2>Price movers</h2>
       </summary>

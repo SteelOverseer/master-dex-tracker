@@ -88,34 +88,36 @@ function App() {
             <h1>Master Dex</h1>
             <ProgressCount entries={data} />
           </header>
-          <div className="sidebar-actions">
-            <label className="binder-toggle">
+          <div className="panel sidebar-tools">
+            <div className="sidebar-actions">
+              <label className="binder-toggle">
+                <input
+                  type="checkbox"
+                  role="switch"
+                  checked={binder}
+                  onChange={(event) => {
+                    setBinder(event.target.checked)
+                    writeBinder(event.target.checked)
+                  }}
+                />
+                Binder preview
+              </label>
+              <DownloadShoppingList sets={setOptions} />
+            </div>
+            <div className="search-field">
+              <SearchIcon />
               <input
-                type="checkbox"
-                role="switch"
-                checked={binder}
-                onChange={(event) => {
-                  setBinder(event.target.checked)
-                  writeBinder(event.target.checked)
-                }}
+                type="search"
+                className="search"
+                placeholder="Card name"
+                aria-label="Card name"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
               />
-              Binder preview
-            </label>
-            <DownloadShoppingList sets={setOptions} />
-          </div>
-          <div className="search-field">
-            <SearchIcon />
-            <input
-              type="search"
-              className="search"
-              placeholder="Card name"
-              aria-label="Card name"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
+            </div>
           </div>
           <PriceMovers entries={data} onSelect={goToCard} />
-          <nav className="set-list" aria-label="Filter by set">
+          <nav className="panel set-list" aria-label="Filter by set">
             <h2>Filter by set</h2>
             <ul>
               {setOptions.map((set) => (

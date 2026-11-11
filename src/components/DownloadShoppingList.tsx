@@ -19,9 +19,17 @@ export function DownloadShoppingList({ sets }: { sets: WantedSet[] }) {
   }
 
   return (
-    <button type="button" className="download-list" disabled={sets.length === 0} onClick={download}>
+    // Just the icon, so it fits beside the binder switch. The label is for
+    // screen readers; data-tooltip draws a quicker tooltip than `title` would.
+    <button
+      type="button"
+      className="download-list"
+      aria-label="Download shopping list"
+      data-tooltip="Download shopping list"
+      disabled={sets.length === 0}
+      onClick={download}
+    >
       <DownloadIcon />
-      Shopping list
     </button>
   )
 }

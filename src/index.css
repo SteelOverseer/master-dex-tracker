@@ -13,10 +13,6 @@ h1 {
   margin-bottom: 0.75rem;
 }
 
-.progress {
-  max-width: 24rem;
-}
-
 .progress progress {
   display: block;
   width: 100%;
@@ -46,9 +42,23 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
+/* A bordered box for each group in the sidebar, so they don't run together.
+   The border follows the text color: soft white on a dark background, soft
+   black on a light one. */
+.panel {
+  padding: 0.75rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 8px;
+}
+
+.sidebar-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .sidebar-actions {
   display: flex;
-  margin-top: 0.5rem;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
@@ -103,7 +113,6 @@ h1 {
 
 .search-field {
   position: relative;
-  margin-bottom: 0.5rem;
 }
 
 .search-field svg {
@@ -137,7 +146,19 @@ h1 {
   color: light-dark(#2e7d32, #81c784);
 }
 
+/* The keyboard focus ring on collapsible headings (price movers, generations):
+   softer and rounder than the browser's hard white box, but still clear. */
+summary:focus-visible {
+  outline: 2px solid color-mix(in srgb, currentColor 50%, transparent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .price-movers summary {
+  /* Only as wide as the heading, so its focus ring hugs the text rather
+     than sitting just inside the panel's border. */
+  width: fit-content;
+  padding-right: 0.3rem;
   list-style: none;
   cursor: pointer;
 }
@@ -162,6 +183,11 @@ h1 {
 
 .price-movers[open] h2::before {
   transform: rotate(90deg);
+}
+
+/* Collapsed, the heading is all there is, so drop the space under it. */
+.price-movers:not([open]) h2 {
+  margin-bottom: 0;
 }
 
 .price-movers h3 {
@@ -257,7 +283,8 @@ h1 {
   min-height: 0;
   max-height: 14rem;
   margin: 0;
-  padding: 0;
+  /* Room between the counts and the scrollbar. */
+  padding: 0 0.5rem 0 0;
   overflow-y: auto;
   list-style: none;
 }
@@ -294,14 +321,55 @@ h1 {
   display: inline-flex;
   flex: none;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.6rem;
+  padding: 0.25rem 0.4rem;
+  /* Drawn in the same style as the panels; a rounded button otherwise falls
+     back to the browser's plain default border. */
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  color: inherit;
   font: inherit;
-  font-size: 0.9rem;
   cursor: pointer;
 }
 
+.download-list:hover:not(:disabled) {
+  background: color-mix(in srgb, currentColor 20%, transparent);
+}
+
+/* A tooltip that appears after a short delay, unlike the browser's slow one
+   for `title`. It opens below and to the left, since the button sits at the
+   right edge of the sidebar. */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 5;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 6px;
+  background: Canvas;
+  color: CanvasText;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transition-delay: 0.25s;
+}
+
 .download-list:disabled {
+  opacity: 0.5;
   cursor: default;
 }
 
