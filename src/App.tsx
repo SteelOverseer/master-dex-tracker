@@ -11,6 +11,7 @@ import { GenerationSection } from './components/GenerationSection'
 import { ProgressCount } from './components/ProgressCount'
 import type { DexEntry } from './types'
 import { groupWantedBySet } from './wantedSets'
+import { usePauseHoverWhileScrolling } from './hooks/usePauseHoverWhileScrolling'
 
 const BINDER_KEY = 'view:binder'
 
@@ -32,6 +33,7 @@ function writeBinder(on: boolean) {
 }
 
 function App() {
+  usePauseHoverWhileScrolling()
   const [binder, setBinder] = useState(readBinder)
   const [search, setSearch] = useState('')
   const [wantedSet, setWantedSet] = useState('')

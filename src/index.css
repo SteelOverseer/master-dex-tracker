@@ -312,6 +312,40 @@ h1 {
     opacity 0.2s;
 }
 
+/* Lift the card art on hover. The button keeps its normal size and handles the
+   pointer; only the art inside it grows, and it ignores the pointer. That way
+   the enlarged art never blocks a neighbor's title or dropdown: once the
+   pointer leaves this card's own footprint, the zoom ends. The short delay
+   keeps sweeping across the grid from zooming every card on the way. Nothing
+   zooms while the page scrolls (see usePauseHoverWhileScrolling).
+   Skipped on touch screens, where hover sticks. */
+@media (hover: hover) {
+  .dex-card .dex-card-image > * {
+    position: relative;
+    pointer-events: none;
+    transition:
+      filter 0.2s,
+      opacity 0.2s,
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  :root:not([data-scrolling]) .dex-card .dex-card-image:hover > *,
+  .dex-card .dex-card-image:focus-visible > * {
+    z-index: 3; /* above neighboring cards and the expanded name (z-index 2) */
+    transform: scale(1.7);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+    transition-delay: 0.15s;
+  }
+
+  /* Preview unowned cards in full color. */
+  :root:not([data-scrolling]) .dex-card[data-owned='false'] .dex-card-image:hover img,
+  .dex-card[data-owned='false'] .dex-card-image:focus-visible img {
+    filter: none;
+    opacity: 1;
+  }
+}
+
 .dex-card-missing {
   display: grid;
   place-items: center;
