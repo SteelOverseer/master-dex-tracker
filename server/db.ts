@@ -36,6 +36,18 @@ db.exec(`
     fetched_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
 
+  -- One row each time a card's price (or the variant it comes from) changes,
+  -- so price movements can be shown. Unlike card_prices, this can't be rebuilt.
+  CREATE TABLE IF NOT EXISTS price_history (
+    id          INTEGER PRIMARY KEY,
+    card_id     TEXT NOT NULL REFERENCES printings(card_id),
+    price       REAL,
+    variant     TEXT,
+    recorded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_price_history_card_id ON price_history(card_id);
+
   CREATE TABLE IF NOT EXISTS collection (
     dex_id     INTEGER PRIMARY KEY,
     card_id    TEXT NOT NULL REFERENCES printings(card_id),
@@ -48,4 +60,14 @@ db.exec(`
 const setColumns = db.prepare(`PRAGMA table_info(sets)`).all() as { name: string }[]
 if (!setColumns.some((column) => column.name === 'abbreviation')) {
   db.exec(`ALTER TABLE sets ADD COLUMN abbreviation TEXT`)
+}
+
+// Price history started after the first release. Seed it with the prices we
+// already have, so the next sync has something to compare against.
+const historyRows = db.prepare(`SELECT COUNT(*) AS count FROM price_history`).get() as { count: number }
+if (historyRows.count === 0) {
+  db.exec(`
+    INSERT INTO price_history (card_id, price, variant, recorded_at)
+    SELECT card_id, price, variant, fetched_at FROM card_prices
+  `)
 }

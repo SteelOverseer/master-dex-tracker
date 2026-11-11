@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { db } from './db.ts'
+import { PRICE_BASELINE, PRICE_CHANGE, priceChange } from './priceChanges.ts'
 import { refreshPrice } from './prices.ts'
 import { CHOSEN_CARDS } from './queries.ts'
 
@@ -9,16 +10,18 @@ const app = new Hono()
 app.get('/api/health', (c) => c.json({ ok: true }))
 
 // One row per dex number: the card you picked if you have, otherwise its
-// earliest printing, along with your status and its price (null when unknown).
+// earliest printing, along with your status, its price (null when unknown)
+// and how much that price moved over the last week (null when it barely did).
 const dexEntries = db.prepare(`
-  WITH ${CHOSEN_CARDS}
+  WITH ${CHOSEN_CARDS}, ${PRICE_BASELINE}
   SELECT ch.dex_id, p.card_id, p.local_id, p.name, p.image,
          s.id AS set_id, s.name AS set_name, s.abbreviation AS set_abbreviation,
-         s.release_date, ch.status, cp.price
+         s.release_date, ch.status, cp.price, ${PRICE_CHANGE} AS price_change
   FROM chosen ch
   JOIN printings p ON p.card_id = ch.card_id
   JOIN sets s ON s.id = p.set_id
   LEFT JOIN card_prices cp ON cp.card_id = ch.card_id
+  LEFT JOIN baseline b ON b.card_id = ch.card_id AND b.rank = 1
   ORDER BY ch.dex_id
 `)
 
@@ -72,7 +75,7 @@ app.put('/api/dex/:dexId', async (c) => {
     console.warn(`Could not fetch price for ${cardId}:`, error)
     return null
   })
-  return c.json({ dex_id: dexId, card_id: cardId, status, price })
+  return c.json({ dex_id: dexId, card_id: cardId, status, price, price_change: priceChange(cardId) })
 })
 
 serve({ fetch: app.fetch, port: 3000 }, (info) => {

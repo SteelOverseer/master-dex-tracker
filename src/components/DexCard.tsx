@@ -2,12 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { fetchPrintings } from '../api'
 import { useSaveEntry } from '../hooks/useSaveEntry'
+import { describeChange, formatChange, priceFormat } from '../priceChange'
 import type { DexEntry, Printing } from '../types'
-
-const priceFormat = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-})
 
 // The number comes first so it stays visible if the label is cut off. The
 // card name is only added when it differs from the one shown above the image.
@@ -58,6 +54,7 @@ export function DexCard({ entry }: { entry: DexEntry }) {
       release_date: printing.release_date,
       status: 'wanted',
       price: null, // filled in once the server has looked it up
+      price_change: null,
     })
   }
 
@@ -88,6 +85,16 @@ export function DexCard({ entry }: { entry: DexEntry }) {
         </span>
         <span className="dex-card-price">
           {entry.price === null ? '-' : priceFormat.format(entry.price)}
+          {entry.status === 'wanted' && entry.price !== null && entry.price_change !== null && (
+            <span
+              className="price-change"
+              data-direction={entry.price_change > 0 ? 'up' : 'down'}
+              title={describeChange(entry.price, entry.price_change)}
+            >
+              {entry.price_change > 0 ? '▲' : '▼'}
+              {formatChange(entry.price_change, false)}
+            </span>
+          )}
         </span>
       </p>
       <button

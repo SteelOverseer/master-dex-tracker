@@ -50,8 +50,9 @@ Both sync scripts take an optional number to limit the run, for example `node se
 
 - `server/sync.ts` downloads every physical set and each Pokémon's cards from TCGdex into SQLite. Pokémon TCG Pocket sets are skipped because they are digital only.
 - The default card for each Pokémon is its printing from the earliest set release date (ties are broken by card ID).
-- Your picks live in the `collection` table, one row per Pokémon with a status of `wanted` or `owned`. Everything else in the database can be rebuilt by re-running the sync scripts, so **`collection` is the only data worth backing up**.
+- Your picks live in the `collection` table, one row per Pokémon with a status of `wanted` or `owned`. Price history lives in `price_history`. Everything else in the database can be rebuilt by re-running the sync scripts, so **`collection` and `price_history` are the data worth backing up**.
 - Prices come from the TCGdex card data (TCGplayer market price). When a card has several variants, the cheapest is shown.
+- Each time a price changes, a row is added to `price_history`. Wanted cards show how much their price moved over the last 7 days (red ▲ when it rose, green ▼ when it fell), and the sidebar's **Price movers** lists the biggest moves. Moves under $0.25 or 5% are ignored, and only prices of the same variant are compared. `sync-prices.ts` prints the same summary when it finishes. Movements only build up if you run the price sync regularly, for example daily.
 
 The database lives in `data/app.db` and backups in `backups/`. Both are gitignored.
 

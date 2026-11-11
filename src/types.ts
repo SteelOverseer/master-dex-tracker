@@ -15,4 +15,7 @@ export interface DexEntry extends Printing {
   set_abbreviation: string | null
   status: Status | null
   price: number | null
+  // How much the price moved over the last week, in dollars. Null when it
+  // barely moved or there's no earlier price to compare with.
+  price_change: number | null
 }

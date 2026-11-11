@@ -8,6 +8,7 @@ import { SearchIcon } from './components/icons'
 import { DownloadShoppingList } from './components/DownloadShoppingList'
 import { DexCard } from './components/DexCard'
 import { GenerationSection } from './components/GenerationSection'
+import { PriceMovers } from './components/PriceMovers'
 import { ProgressCount } from './components/ProgressCount'
 import type { DexEntry } from './types'
 import { groupWantedBySet } from './wantedSets'
@@ -98,6 +99,7 @@ function App() {
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
+          <PriceMovers entries={data} />
           <nav className="set-list" aria-label="Filter by set">
             <h2>Filter by set</h2>
             <ul>

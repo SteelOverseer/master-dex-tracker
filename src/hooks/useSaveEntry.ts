@@ -22,7 +22,7 @@ export function useSaveEntry() {
       queryClient.setQueryData<DexEntry[]>(['dex'], (old) =>
         old?.map((entry) =>
           entry.dex_id === saved.dex_id && entry.card_id === saved.card_id
-            ? { ...entry, price: saved.price }
+            ? { ...entry, price: saved.price, price_change: saved.price_change }
             : entry,
         ),
       )

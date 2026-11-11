@@ -32,6 +32,18 @@ const savePrice = db.prepare(`
     variant = excluded.variant,
     fetched_at = CURRENT_TIMESTAMP
 `)
+// Adds a history row unless the card's latest one already says the same.
+const recordHistory = db.prepare(`
+  INSERT INTO price_history (card_id, price, variant)
+  SELECT :card_id, :price, :variant
+  WHERE NOT EXISTS (
+    SELECT 1 FROM (
+      SELECT price, variant FROM price_history
+      WHERE card_id = :card_id ORDER BY id DESC LIMIT 1
+    ) AS latest
+    WHERE latest.price IS :price AND latest.variant IS :variant
+  )
+`)
 const readPrice = db.prepare(`SELECT price FROM card_prices WHERE card_id = ?`)
 
 export function hasFreshPrice(cardId: string) {
@@ -44,7 +56,10 @@ export async function refreshPrice(cardId: string) {
     const card = await withRetry(() => tcgdex.fetch('cards', cardId))
     if (card) {
       const best = cheapestMarketPrice(card as CardWithPricing)
-      savePrice.run(cardId, best?.price ?? null, best?.variant ?? null)
+      const price = best?.price ?? null
+      const variant = best?.variant ?? null
+      savePrice.run(cardId, price, variant)
+      recordHistory.run({ card_id: cardId, price, variant })
     }
   }
   return (readPrice.get(cardId)?.price as number | null | undefined) ?? null

@@ -122,6 +122,93 @@ h1 {
   font: inherit;
 }
 
+/* Red when a wanted card got pricier, green when it got cheaper. */
+.price-change {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.price-change[data-direction='up'] {
+  color: light-dark(#c62828, #ef9a9a);
+}
+
+.price-change[data-direction='down'] {
+  color: light-dark(#2e7d32, #81c784);
+}
+
+.price-movers summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.price-movers summary::-webkit-details-marker {
+  display: none;
+}
+
+.price-movers h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.price-movers h2::before {
+  content: '▸';
+  display: inline-block;
+  transition: transform 0.15s;
+}
+
+.price-movers[open] h2::before {
+  transform: rotate(90deg);
+}
+
+.price-movers h3 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.price-movers-count {
+  font-weight: normal;
+  opacity: 0.7;
+}
+
+.price-movers ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+}
+
+.price-movers li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.price-movers-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price-movers small {
+  opacity: 0.8;
+}
+
+.price-movers-empty {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
 .set-list {
   display: flex;
   flex-direction: column;

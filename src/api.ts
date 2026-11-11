@@ -16,6 +16,7 @@ interface SaveResponse {
   card_id: string
   status: Status
   price: number | null
+  price_change: number | null
 }
 
 export const saveEntry = (entry: DexEntry) =>
