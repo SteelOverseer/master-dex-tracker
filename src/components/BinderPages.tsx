@@ -1,5 +1,6 @@
 import { BINDER_PAGE, toSpreads } from '../binder'
 import { useSaveEntry } from '../hooks/useSaveEntry'
+import { cardElementId } from '../showCard'
 import type { DexEntry } from '../types'
 
 interface Props {
@@ -26,6 +27,7 @@ function BinderSlot({ entry, dimmed }: { entry: DexEntry | null; dimmed: boolean
   return (
     <button
       type="button"
+      id={cardElementId(entry.dex_id)}
       className="binder-slot"
       data-owned={owned}
       data-dimmed={dimmed}

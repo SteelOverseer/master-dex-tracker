@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { fetchPrintings } from '../api'
 import { useSaveEntry } from '../hooks/useSaveEntry'
+import { cardElementId } from '../showCard'
 import { describeChange, formatChange, priceFormat } from '../priceChange'
 import type { DexEntry, Printing } from '../types'
 
@@ -60,6 +61,7 @@ export function DexCard({ entry }: { entry: DexEntry }) {
 
   return (
     <figure
+      id={cardElementId(entry.dex_id)}
       className="dex-card"
       data-owned={owned}
       data-align-end={alignEnd}

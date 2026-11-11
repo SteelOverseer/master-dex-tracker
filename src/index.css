@@ -194,9 +194,39 @@ h1 {
 
 .price-movers-name {
   min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+.price-movers-name:hover,
+.price-movers-name:focus-visible {
+  text-decoration: underline;
+}
+
+/* A brief ring around a card you were taken to, so it's easy to spot. */
+[data-highlight] {
+  border-radius: 6px;
+  animation: card-highlight 1.8s ease-out;
+}
+
+@keyframes card-highlight {
+  0%,
+  50% {
+    outline: 3px solid #1976d2;
+    outline-offset: 4px;
+  }
+  100% {
+    outline: 3px solid transparent;
+    outline-offset: 4px;
+  }
 }
 
 .price-movers small {

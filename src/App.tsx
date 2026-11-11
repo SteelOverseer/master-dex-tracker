@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useQuery } from '@tanstack/react-query'
 import { fetchDex } from './api'
 import { pageCount } from './binder'
@@ -12,6 +13,7 @@ import { PriceMovers } from './components/PriceMovers'
 import { ProgressCount } from './components/ProgressCount'
 import type { DexEntry } from './types'
 import { groupWantedBySet } from './wantedSets'
+import { showCard } from './showCard'
 import { usePauseHoverWhileScrolling } from './hooks/usePauseHoverWhileScrolling'
 
 const BINDER_KEY = 'view:binder'
@@ -57,6 +59,19 @@ function App() {
     (!term || entry.name.toLowerCase().includes(term))
   const visible = data.filter(matches)
 
+  // Takes you to a card, e.g. from the price movers list.
+  function goToCard(entry: DexEntry) {
+    // A search or set filter could be hiding it (or dimming it in the binder),
+    // so clear them first and let the card render before looking for it.
+    if (!matches(entry)) {
+      flushSync(() => {
+        setSearch('')
+        setWantedSet('')
+      })
+    }
+    showCard(entry.dex_id)
+  }
+
   // Binder pages are numbered straight through, one generation after another.
   const firstPages: number[] = []
   let nextPage = 1
@@ -99,7 +114,7 @@ function App() {
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
-          <PriceMovers entries={data} />
+          <PriceMovers entries={data} onSelect={goToCard} />
           <nav className="set-list" aria-label="Filter by set">
             <h2>Filter by set</h2>
             <ul>
