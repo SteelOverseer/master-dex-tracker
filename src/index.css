@@ -405,6 +405,114 @@ summary:focus-visible {
     margin-bottom: 0;
     max-height: calc(100vh - 2rem);
   }
+
+  /* The drawer controls only exist on narrow screens. */
+  .mobile-bar,
+  .drawer-backdrop,
+  .icon-button.drawer-close {
+    display: none;
+  }
+}
+
+/* Narrow screens: a slim bar at the top, and the sidebar becomes a drawer
+   that slides in from the left over the cards. */
+@media (width < 56rem) {
+  .mobile-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: -1rem -1rem 1rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+    background: Canvas;
+  }
+
+  .mobile-bar-title {
+    font-weight: 700;
+  }
+
+  .mobile-bar-count {
+    margin-left: auto;
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 20;
+    box-sizing: border-box;
+    width: min(85vw, 20rem);
+    margin: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    background: Canvas;
+    box-shadow: 4px 0 24px rgb(0 0 0 / 0.5);
+    transform: translateX(-100%);
+    /* Hidden once it has slid away, so it's out of the tab order. */
+    visibility: hidden;
+    transition:
+      transform 0.25s ease,
+      visibility 0s 0.25s;
+  }
+
+  .sidebar[data-open='true'] {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.25s ease;
+  }
+
+  /* The drawer scrolls as a whole, so the set list needn't scroll on its own. */
+  .set-list ul {
+    max-height: none;
+  }
+
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    background: rgb(0 0 0 / 0.5);
+  }
+
+  /* Keep the page behind still while the drawer is open. */
+  :root:has(.sidebar[data-open='true']) {
+    overflow: hidden;
+  }
+}
+
+@media (width < 56rem) and (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar[data-open='true'] {
+    transition: none;
+  }
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* The sidebar's gap already spaces the title from the progress bar. */
+.sidebar-header h1 {
+  margin-bottom: 0;
+}
+
+/* A small square button holding just an icon. */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
 }
 
 .generation {

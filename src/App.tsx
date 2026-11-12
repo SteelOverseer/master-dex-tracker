@@ -5,7 +5,7 @@ import { fetchDex } from './api'
 import { pageCount } from './binder'
 import { GENERATIONS } from './generations'
 import { BinderPages } from './components/BinderPages'
-import { SearchIcon } from './components/icons'
+import { CloseIcon, MenuIcon, SearchIcon } from './components/icons'
 import { DownloadShoppingList } from './components/DownloadShoppingList'
 import { DexCard } from './components/DexCard'
 import { GenerationSection } from './components/GenerationSection'
@@ -14,6 +14,7 @@ import { ProgressCount } from './components/ProgressCount'
 import type { DexEntry } from './types'
 import { groupWantedBySet } from './wantedSets'
 import { showCard } from './showCard'
+import { useDrawer } from './hooks/useDrawer'
 import { usePauseHoverWhileScrolling } from './hooks/usePauseHoverWhileScrolling'
 
 const BINDER_KEY = 'view:binder'
@@ -40,6 +41,14 @@ function App() {
   const [binder, setBinder] = useState(readBinder)
   const [search, setSearch] = useState('')
   const [wantedSet, setWantedSet] = useState('')
+  const {
+    open: drawerOpen,
+    menuButton,
+    closeButton,
+    show: showDrawer,
+    hide: hideDrawer,
+    dismiss: dismissDrawer,
+  } = useDrawer()
   const { data, isPending, error } = useQuery({
     queryKey: ['dex'],
     queryFn: fetchDex,
@@ -61,14 +70,16 @@ function App() {
 
   // Takes you to a card, e.g. from the price movers list.
   function goToCard(entry: DexEntry) {
-    // A search or set filter could be hiding it (or dimming it in the binder),
-    // so clear them first and let the card render before looking for it.
-    if (!matches(entry)) {
-      flushSync(() => {
+    // Close the drawer (on narrow screens it covers the cards), and clear a
+    // search or set filter that hides the card (or dims it in the binder).
+    // Let that render before looking for the card.
+    flushSync(() => {
+      hideDrawer()
+      if (!matches(entry)) {
         setSearch('')
         setWantedSet('')
-      })
-    }
+      }
+    })
     showCard(entry.dex_id)
   }
 
@@ -80,14 +91,44 @@ function App() {
     nextPage += pageCount(data.filter((e) => e.dex_id >= generation.first && e.dex_id <= generation.last).length)
   }
 
+  const owned = data.filter((entry) => entry.status === 'owned').length
+
   return (
     <>
+      {/* Narrow screens only: opens the sidebar as a drawer. */}
+      <div className="mobile-bar">
+        <button
+          type="button"
+          ref={menuButton}
+          className="icon-button"
+          aria-label="Open filters"
+          aria-expanded={drawerOpen}
+          aria-controls="sidebar"
+          onClick={showDrawer}
+        >
+          <MenuIcon />
+        </button>
+        <span className="mobile-bar-title">Master Dex</span>
+        <span className="mobile-bar-count">
+          {owned} / {data.length}
+        </span>
+      </div>
+      {drawerOpen && <div className="drawer-backdrop" onClick={dismissDrawer} />}
       <div className="layout">
-        <aside className="sidebar">
-          <header>
+        <aside id="sidebar" className="sidebar" data-open={drawerOpen}>
+          <header className="sidebar-header">
             <h1>Master Dex</h1>
-            <ProgressCount entries={data} />
+            <button
+              type="button"
+              ref={closeButton}
+              className="icon-button drawer-close"
+              aria-label="Close filters"
+              onClick={dismissDrawer}
+            >
+              <CloseIcon />
+            </button>
           </header>
+          <ProgressCount entries={data} />
           <div className="panel sidebar-tools">
             <div className="sidebar-actions">
               <label className="binder-toggle">
@@ -125,7 +166,10 @@ function App() {
                   <button
                     type="button"
                     aria-pressed={activeSet === set.id}
-                    onClick={() => setWantedSet(activeSet === set.id ? '' : set.id)}
+                    onClick={() => {
+                      setWantedSet(activeSet === set.id ? '' : set.id)
+                      hideDrawer()
+                    }}
                   >
                     <span className="set-name">
                       {set.name}

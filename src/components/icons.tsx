@@ -32,3 +32,15 @@ export const SearchIcon = () => (
     <path d="m21 21-4.3-4.3" />
   </Icon>
 )
+
+export const MenuIcon = () => (
+  <Icon width={20} height={20}>
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </Icon>
+)
+
+export const CloseIcon = () => (
+  <Icon width={20} height={20}>
+    <path d="M18 6 6 18M6 6l12 12" />
+  </Icon>
+)
